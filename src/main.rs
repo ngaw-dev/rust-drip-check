@@ -7,4 +7,15 @@ fn main() {
     // We want the price to be printed as $ price / 100
     let dollar_price:f32 = price as f32 / 100.0;
     println!("Your subscription for {title} at ${dollar_price} per {duration} starting {start_date}");
+
+    let yearly_cost:f32;
+    if duration == "weekly" {
+        yearly_cost = price as f32 * 52.0 / 100.0;
+    } else if duration == "monthly" {
+        yearly_cost = price as f32 * 12.0 / 100.0;
+    } else { // duration is default let's assume yearly
+        yearly_cost = price as f32 as f32 / 100.0;
+    }
+
+    println!("Your {title} subscription yearly cost is ${yearly_cost}");
 }
