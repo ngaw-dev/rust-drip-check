@@ -26,9 +26,15 @@ fn main() {
             duration: Duration::Weekly,
             start_date: "22/03/2026".to_string(),
         },
+        Subscription {
+            title: "Amazon Prime".to_string(),
+            price: 3000,
+            duration: Duration::Yearly,
+            start_date: "08/10/2025".to_string(),
+        },
     ];
 
-    let total_cost: f32;
+    let mut total_cost: f32 = 0.0;
     for sub in subscriptions {
         // We want the price to be printed as $ price / 100
         let dollar_price: f32 = sub.price as f32 / 100.0;
@@ -36,13 +42,13 @@ fn main() {
             "Your subscription for {} at ${dollar_price} per {:?} starting {}",
             sub.title, sub.duration, sub.start_date
         );
+        let yearly_cost = calculate_yearly_cost(sub.price, sub.duration);
         println!(
             "Your {} subscription yearly cost is ${}",
-            sub.title,
-            calculate_yearly_cost(sub.price, sub.duration)
+            sub.title, yearly_cost
         );
 
-        total_cost = total_cost + calculate_yearly_cost(sub.price, sub.duration);
+        total_cost = total_cost + yearly_cost;
     }
 
     println!("Total yearly cost ${total_cost}")
