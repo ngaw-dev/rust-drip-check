@@ -5,6 +5,7 @@ struct Subscription {
     start_date: String,
 }
 
+#[derive(Debug)]
 enum Duration {
     Weekly,
     Monthly,
@@ -28,7 +29,7 @@ fn main() {
     // We want the price to be printed as $ price / 100
     let dollar_price: f32 = sub1.price as f32 / 100.0;
     println!(
-        "Your subscription for {} at ${dollar_price} per {} starting {}",
+        "Your subscription for {} at ${dollar_price} per {:?} starting {}",
         sub1.title, sub1.duration, sub1.start_date
     );
     println!(
@@ -39,7 +40,7 @@ fn main() {
 
     let dollar_price2: f32 = sub2.price as f32 / 100.0;
     println!(
-        "Your subscription for {} at ${dollar_price2} per {} starting {}",
+        "Your subscription for {} at ${dollar_price2} per {:?} starting {}",
         sub2.title, sub2.duration, sub2.start_date
     );
     println!(
