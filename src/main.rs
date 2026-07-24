@@ -33,27 +33,31 @@ impl Subscription {
 }
 
 fn main() {
-    let subscriptions = [
-        Subscription {
-            title: "Github".to_string(),
-            price: 999,
-            duration: Duration::Monthly,
-            start_date: "14/04/2026".to_string(),
-        },
-        Subscription {
-            title: "OpenCode".to_string(),
-            price: 250,
-            duration: Duration::Weekly,
-            start_date: "22/03/2026".to_string(),
-        },
-        Subscription {
-            title: "Amazon Prime".to_string(),
-            price: 3000,
-            duration: Duration::Yearly,
-            start_date: "08/10/2025".to_string(),
-        },
-    ];
+    let mut subscriptions = Vec::new();
 
+    subscriptions.push(Subscription {
+        title: "Github".to_string(),
+        price: 999,
+        duration: Duration::Monthly,
+        start_date: "14/04/2026".to_string(),
+    });
+    subscriptions.push(Subscription {
+        title: "OpenCode".to_string(),
+        price: 250,
+        duration: Duration::Weekly,
+        start_date: "22/03/2026".to_string(),
+    });
+    subscriptions.push(Subscription {
+        title: "Amazon Prime".to_string(),
+        price: 3000,
+        duration: Duration::Yearly,
+        start_date: "08/10/2025".to_string(),
+    });
+
+    get_total_cost(subscriptions);
+}
+
+fn get_total_cost(subscriptions: Vec<Subscription>) {
     let mut total_cost: f32 = 0.0;
     for sub in subscriptions {
         // We want the price to be printed as $ price / 100
@@ -73,5 +77,5 @@ fn main() {
         total_cost = total_cost + yearly_cost;
     }
 
-    println!("Total yearly cost ${total_cost}")
+    println!("Total yearly cost ${total_cost}");
 }
