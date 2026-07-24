@@ -9,6 +9,7 @@ struct Subscription {
 enum Duration {
     Weekly,
     Monthly,
+    Quarterly,
     Yearly,
 }
 
@@ -18,6 +19,7 @@ impl Subscription {
         match self.duration {
             Duration::Weekly => yearly_cost = self.price as f32 * 52.0 / 100.0,
             Duration::Monthly => yearly_cost = self.price as f32 * 12.0 / 100.0,
+            Duration::Quarterly => yearly_cost = self.price as f32 * 4.0 / 100.0,
             _ => {
                 // duration is default let's assume yearly
                 yearly_cost = self.price as f32 / 100.0
@@ -141,5 +143,8 @@ mod tests {
 
         sub.duration = Duration::Weekly;
         assert_eq!(sub.yearly_cost(), 520.0);
+
+        sub.duration = Duration::Quarterly;
+        assert_eq!(sub.yearly_cost(), 40.0);
     }
 }
