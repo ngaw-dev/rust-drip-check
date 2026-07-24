@@ -12,6 +12,26 @@ enum Duration {
     Yearly,
 }
 
+impl Subscription {
+    fn yearly_cost(&self) -> f32 {
+        let yearly_cost: f32;
+        match self.duration {
+            Duration::Weekly => yearly_cost = self.price as f32 * 52.0 / 100.0,
+            Duration::Monthly => yearly_cost = self.price as f32 * 12.0 / 100.0,
+            _ => {
+                // duration is default let's assume yearly
+                yearly_cost = self.price as f32 as f32 / 100.0
+            }
+        }
+
+        return yearly_cost;
+    }
+
+    fn dollar_price(&self) -> f32 {
+        return self.price as f32 / 100.0;
+    }
+}
+
 fn main() {
     let subscriptions = [
         Subscription {
@@ -37,12 +57,14 @@ fn main() {
     let mut total_cost: f32 = 0.0;
     for sub in subscriptions {
         // We want the price to be printed as $ price / 100
-        let dollar_price: f32 = sub.price as f32 / 100.0;
         println!(
-            "Your subscription for {} at ${dollar_price} per {:?} starting {}",
-            sub.title, sub.duration, sub.start_date
+            "Your subscription for {} at ${} per {:?} starting {}",
+            sub.title,
+            sub.dollar_price(),
+            sub.duration,
+            sub.start_date
         );
-        let yearly_cost = calculate_yearly_cost(sub.price, sub.duration);
+        let yearly_cost = sub.yearly_cost();
         println!(
             "Your {} subscription yearly cost is ${}",
             sub.title, yearly_cost
@@ -52,18 +74,4 @@ fn main() {
     }
 
     println!("Total yearly cost ${total_cost}")
-}
-
-fn calculate_yearly_cost(price: i32, duration: Duration) -> f32 {
-    let yearly_cost: f32;
-    match duration {
-        Duration::Weekly => yearly_cost = price as f32 * 52.0 / 100.0,
-        Duration::Monthly => yearly_cost = price as f32 * 12.0 / 100.0,
-        _ => {
-            // duration is default let's assume yearly
-            yearly_cost = price as f32 as f32 / 100.0
-        }
-    }
-
-    return yearly_cost;
 }
