@@ -1,10 +1,11 @@
-use std::fs;
-
 fn main() {
     let file_path = "data.csv";
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Should have been able to read the file");
+    let mut reader = csv::Reader::from_path(file_path)
+        .expect("ERROR: Could not open csv");
 
-    println!("{contents}");
+    for data in reader.records() {
+        let record = data.expect("could not read record");
+        println!("{:?}", record);
+    }
 }
