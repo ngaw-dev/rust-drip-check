@@ -54,10 +54,14 @@ fn main() {
         start_date: "08/10/2025".to_string(),
     });
 
-    get_total_cost(subscriptions);
+    get_total_cost(&subscriptions);
+
+    println!("-- Removing the subscriptions at index 1 (start from 0) --");
+    subscriptions.remove(1);
+    get_total_cost(&subscriptions);
 }
 
-fn get_total_cost(subscriptions: Vec<Subscription>) {
+fn get_total_cost(subscriptions: &Vec<Subscription>) {
     let mut total_cost: f32 = 0.0;
     for sub in subscriptions {
         // We want the price to be printed as $ price / 100
