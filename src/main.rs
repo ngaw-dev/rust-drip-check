@@ -20,7 +20,7 @@ impl Subscription {
             Duration::Monthly => yearly_cost = self.price as f32 * 12.0 / 100.0,
             _ => {
                 // duration is default let's assume yearly
-                yearly_cost = self.price as f32 as f32 / 100.0
+                yearly_cost = self.price as f32 / 100.0
             }
         }
 
@@ -58,6 +58,16 @@ fn main() {
 
     println!("-- Removing the subscriptions at index 1 (start from 0) --");
     subscriptions.remove(1);
+    get_total_cost(&subscriptions);
+
+
+    println!("-- Adding new subscriptions --");
+    subscriptions.push(Subscription {
+        title: "Netflix".to_string(),
+        price: 1549,
+        duration: Duration::Monthly,
+        start_date: "23/08/2025".to_string(),
+    });
     get_total_cost(&subscriptions);
 }
 
