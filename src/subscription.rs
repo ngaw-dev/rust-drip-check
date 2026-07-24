@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, serde::Deserialize)]
 pub enum Duration {
     Weekly,
     Monthly,
@@ -6,6 +6,7 @@ pub enum Duration {
     Yearly,
 }
 
+#[derive(Debug, serde::Deserialize)]
 pub struct Subscription {
     pub title: String,
     pub price: i32,
@@ -20,9 +21,7 @@ impl Subscription {
             Duration::Weekly => yearly_cost = self.price as f32 * 52.0 / 100.0,
             Duration::Monthly => yearly_cost = self.price as f32 * 12.0 / 100.0,
             Duration::Quarterly => yearly_cost = self.price as f32 * 4.0 / 100.0,
-            _ => {
-                yearly_cost = self.price as f32 / 100.0
-            }
+            _ => yearly_cost = self.price as f32 / 100.0,
         }
 
         return yearly_cost;
