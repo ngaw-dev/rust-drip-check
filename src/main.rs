@@ -30,6 +30,16 @@ impl Subscription {
     fn dollar_price(&self) -> f32 {
         return self.price as f32 / 100.0;
     }
+
+    fn display(&self) {
+        println!(
+            "Your subscription for {} at ${} per {:?} starting {}",
+            &self.title,
+            &self.dollar_price(),
+            &self.duration,
+            &self.start_date
+        );
+    }
 }
 
 fn main() {
@@ -60,7 +70,6 @@ fn main() {
     subscriptions.remove(1);
     get_total_cost(&subscriptions);
 
-
     println!("-- Adding new subscriptions --");
     subscriptions.push(Subscription {
         title: "Netflix".to_string(),
@@ -69,6 +78,28 @@ fn main() {
         start_date: "23/08/2025".to_string(),
     });
     get_total_cost(&subscriptions);
+
+    println!("-- Show subscriptions where yearly price is > $5.00 --");
+    let large_subscriptions = subscriptions.iter().filter(|sub| sub.price > 500);
+    for sub in large_subscriptions {
+        sub.display();
+    }
+
+    println!("-- Show subscriptions Monthly --");
+    let monthly = subscriptions
+        .iter()
+        .filter(|sub| matches!(sub.duration, Duration::Monthly));
+    for sub in monthly {
+        sub.display();
+    }
+
+    println!("-- Show subscriptions with title like git --");
+    let filtered = subscriptions
+        .iter()
+        .filter(|sub| sub.title.to_lowercase().contains("git"));
+    for sub in filtered {
+        sub.display();
+    }
 }
 
 fn get_total_cost(subscriptions: &Vec<Subscription>) {
