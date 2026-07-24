@@ -124,3 +124,22 @@ fn get_total_cost(subscriptions: &Vec<Subscription>) {
 
     println!("Total yearly cost ${total_cost}");
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_calculate_yearly_cost() {
+        let mut sub = Subscription {
+            title: "Test title".to_string(),
+            price: 1000,
+            duration: Duration::Monthly,
+            start_date: "08/10/2025".to_string(),
+        };
+        assert_eq!(sub.yearly_cost(), 120.0);
+
+        sub.duration = Duration::Weekly;
+        assert_eq!(sub.yearly_cost(), 520.0);
+    }
+}
