@@ -1,4 +1,4 @@
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub enum Duration {
     Weekly,
     Monthly,
@@ -6,7 +6,7 @@ pub enum Duration {
     Yearly,
 }
 
-#[derive(Debug, serde::Deserialize)]
+#[derive(Debug, serde::Deserialize, serde::Serialize)]
 pub struct Subscription {
     pub title: String,
     pub price: i32,
