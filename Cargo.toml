@@ -6,3 +6,6 @@ edition = "2024"
 [dependencies]
 csv = "1.4.0"
 serde = { version = "1.0.229", features = ["derive"] }
+diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
+dotenvy = "0.15"
+libsqlite3-sys = { version = "0.30", features = ["bundled"] }

@@ -1,2 +1,4 @@
 /target
 src/objectives*.md
+.env
+database.db
