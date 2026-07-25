@@ -61,7 +61,10 @@ fn main() {
         let mut days_before_input = String::new();
         println!("\nDays before expiration to remind? (enter 0 to exit)");
         stdin().read_line(&mut days_before_input).unwrap();
-        let days_before: i32 = days_before_input.trim_end().parse().expect("Invalid number");
+        let days_before: i32 = days_before_input
+            .trim_end()
+            .parse()
+            .expect("Invalid number");
 
         if days_before == 0 {
             break;
@@ -87,9 +90,11 @@ fn main() {
             .execute(connection)
             .expect("ERROR: saving new reminder");
 
-        println!("Saved reminder: {} days before at {}", days_before, reminder_time);
+        println!(
+            "Saved reminder: {} days before at {}",
+            days_before, reminder_time
+        );
     }
 
     println!("\nDone!");
-
 }

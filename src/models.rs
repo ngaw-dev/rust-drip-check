@@ -25,7 +25,7 @@ impl fmt::Display for Duration {
     }
 }
 
-#[derive(Queryable, Selectable, Debug)]
+#[derive(Queryable, Selectable, Debug, Identifiable)]
 #[diesel(table_name = crate::schema::subscriptions)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Subscription {
