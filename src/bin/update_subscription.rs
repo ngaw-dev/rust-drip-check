@@ -1,9 +1,11 @@
 use chrono::NaiveDate;
 use diesel::prelude::*;
 use rust_drip_check::db::establish_connection;
+use rust_drip_check::models::Duration;
 use rust_drip_check::models::Subscription;
 use std::env::args;
 use std::io::stdin;
+use strum::IntoEnumIterator;
 
 fn main() {
     use rust_drip_check::schema::subscriptions::dsl::*;
@@ -60,11 +62,21 @@ fn main() {
                         .get_result(connection)
                         .unwrap()
                 }
-                3 => diesel::update(subscriptions.find(subscription_id))
-                    .set(duration.eq(val))
-                    .returning(Subscription::as_returning())
-                    .get_result(connection)
-                    .unwrap(),
+                3 => {
+                    let mut dur = String::new();
+                    println!("Select duration:");
+                    for (i, d) in Duration::iter().enumerate() {
+                        println!("{}] {}", i + 1, d);
+                    }
+                    stdin().read_line(&mut dur).unwrap();
+                    let idx: usize = dur.trim_end().parse().expect("ERROR: Invalid selection");
+                    let new_duration = Duration::from_index(idx).expect("ERROR: Invalid selection");
+                    diesel::update(subscriptions.find(subscription_id))
+                        .set(duration.eq(new_duration.to_string()))
+                        .returning(Subscription::as_returning())
+                        .get_result(connection)
+                        .unwrap()
+                }
                 4 => {
                     let parsed_date = NaiveDate::parse_from_str(val.trim(), "%Y-%m-%d")
                         .expect("ERROR: Invalid date format");

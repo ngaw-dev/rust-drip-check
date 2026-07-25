@@ -8,3 +8,4 @@ chrono = "0.4.45"
 diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
 dotenvy = "0.15"
 libsqlite3-sys = { version = "0.30", features = ["bundled"] }
+strum = { version = "0.26", features = ["derive"] }

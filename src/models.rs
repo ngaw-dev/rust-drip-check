@@ -1,4 +1,29 @@
+use std::fmt;
 use diesel::prelude::*;
+use strum::{AsRefStr, EnumIter, IntoEnumIterator};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, AsRefStr)]
+pub enum Duration {
+    Weekly,
+    Monthly,
+    Quarterly,
+    Yearly,
+}
+
+impl Duration {
+    pub fn from_index(index: usize) -> Option<Duration> {
+        if index == 0 {
+            return None;
+        }
+        Duration::iter().nth(index - 1)
+    }
+}
+
+impl fmt::Display for Duration {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.as_ref())
+    }
+}
 
 #[derive(Queryable, Selectable, Debug)]
 #[diesel(table_name = crate::schema::subscriptions)]

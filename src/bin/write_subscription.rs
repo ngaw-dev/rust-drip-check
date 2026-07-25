@@ -3,8 +3,10 @@ use std::io::stdin;
 use chrono::NaiveDate;
 use diesel::prelude::*;
 use rust_drip_check::db::establish_connection;
+use rust_drip_check::models::Duration;
 use rust_drip_check::models::NewSubscription;
 use rust_drip_check::schema::subscriptions;
+use strum::IntoEnumIterator;
 
 fn main() {
     let connection = &mut establish_connection();
@@ -22,9 +24,18 @@ fn main() {
     stdin().read_line(&mut price).unwrap();
     let price: i32 = price.trim_end().parse().expect("Invalid number");
 
-    println!("\nWhat is the duration? (e.g. Monthly, Yearly)");
+    println!("\nWhat is the duration?");
+    for (i, d) in Duration::iter().enumerate() {
+        println!("{}] {}", i + 1, d);
+    }
     stdin().read_line(&mut duration).unwrap();
-    let duration = duration.trim_end().to_string();
+    let duration_idx: usize = duration
+        .trim_end()
+        .parse()
+        .expect("ERROR: Invalid selection");
+    let duration = Duration::from_index(duration_idx)
+        .expect("ERROR: Invalid selection")
+        .to_string();
 
     println!("\nWhat is the start date? (YYYY-MM-DD)");
     stdin().read_line(&mut start_date).unwrap();
