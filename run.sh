@@ -11,6 +11,7 @@ binaries=(
     "update_subscription:1"
     "show_subscriptions:0"
     "write_subscription:0"
+    "server:0"
 )
 
 echo "Available binaries:"
