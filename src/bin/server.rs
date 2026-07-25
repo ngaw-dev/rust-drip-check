@@ -13,6 +13,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Visit api endpoints for data" }))
         .nest("/api/v1/subscriptions", subscription_routes())
+        .nest("/api/v1/subscriptions/{id}/reminders", reminder_routes())
         .with_state(AppState);
 
     // run our app with hyper, listening globally on port 3000
@@ -29,6 +30,18 @@ fn subscription_routes() -> Router<AppState> {
                 .post(create_reminder)
                 .put(update_subscription)
                 .delete(delete_subscription),
+        )
+}
+
+fn reminder_routes() -> Router<AppState> {
+    Router::new()
+        .route("/", get(show_reminders).post(create_reminder))
+        .route(
+            "/{id}",
+            get(get_reminder)
+                .post(create_reminder)
+                .put(update_reminder)
+                .delete(delete_reminder),
         )
 }
 
@@ -71,6 +84,46 @@ async fn delete_subscription() -> Json<Value> {
     Json(json!({
         "data": {
             "key": "TODO: delete_subscription"
+        }
+    }))
+}
+
+async fn show_reminders() -> Json<Value> {
+    Json(json!({
+        "data": {
+            "key": "TODO: show_reminders"
+        }
+    }))
+}
+
+async fn get_reminder() -> Json<Value> {
+    Json(json!({
+        "data": {
+            "key": "TODO: get_reminder"
+        }
+    }))
+}
+
+async fn create_reminder() -> Json<Value> {
+    Json(json!({
+        "data": {
+            "key": "TODO: create_reminder"
+        }
+    }))
+}
+
+async fn update_reminder() -> Json<Value> {
+    Json(json!({
+        "data": {
+            "key": "TODO: update_reminder"
+        }
+    }))
+}
+
+async fn delete_reminder() -> Json<Value> {
+    Json(json!({
+        "data": {
+            "key": "TODO: delete_reminder"
         }
     }))
 }
