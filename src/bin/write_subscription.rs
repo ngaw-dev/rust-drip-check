@@ -1,5 +1,6 @@
 use std::io::stdin;
 
+use chrono::NaiveDate;
 use diesel::prelude::*;
 use rust_drip_check::db::establish_connection;
 use rust_drip_check::models::NewSubscription;
@@ -27,13 +28,14 @@ fn main() {
 
     println!("\nWhat is the start date? (YYYY-MM-DD)");
     stdin().read_line(&mut start_date).unwrap();
-    let start_date = start_date.trim_end().to_string();
+    let parsed_date: NaiveDate = NaiveDate::parse_from_str(start_date.trim(), "%Y-%m-%d")
+        .expect("ERROR: Invalid date format");
 
     let new_sub = NewSubscription {
         title,
         price,
         duration,
-        start_date,
+        start_date: parsed_date.format("%Y-%m-%d").to_string(),
     };
 
     diesel::insert_into(subscriptions::table)

@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use diesel::prelude::*;
 use rust_drip_check::db::establish_connection;
 use rust_drip_check::models::Subscription;
@@ -64,11 +65,15 @@ fn main() {
                     .returning(Subscription::as_returning())
                     .get_result(connection)
                     .unwrap(),
-                4 => diesel::update(subscriptions.find(subscription_id))
-                    .set(start_date.eq(val))
-                    .returning(Subscription::as_returning())
-                    .get_result(connection)
-                    .unwrap(),
+                4 => {
+                    let parsed_date = NaiveDate::parse_from_str(val.trim(), "%Y-%m-%d")
+                        .expect("ERROR: Invalid date format");
+                    diesel::update(subscriptions.find(subscription_id))
+                        .set(start_date.eq(parsed_date.format("%Y-%m-%d").to_string()))
+                        .returning(Subscription::as_returning())
+                        .get_result(connection)
+                        .unwrap()
+                }
                 _ => unreachable!(),
             };
 
