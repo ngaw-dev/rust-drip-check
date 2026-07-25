@@ -9,7 +9,7 @@ fn main() {
         .limit(5)
         .select(Subscription::as_select())
         .load(connection)
-        .expect("Error loading subscriptions");
+        .expect("ERROR:  loading subscriptions");
 
     println!("Displaying {} subscriptions", results.len());
     for sub in results {

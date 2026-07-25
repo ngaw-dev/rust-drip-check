@@ -9,3 +9,14 @@ pub struct Subscription {
     pub duration: String,
     pub start_date: String,
 }
+
+use crate::schema::subscriptions;
+
+#[derive(Insertable)]
+#[diesel(table_name = subscriptions)]
+pub struct NewSubscription {
+    pub title: String,
+    pub price: i32,
+    pub duration: String,
+    pub start_date: String,
+}
