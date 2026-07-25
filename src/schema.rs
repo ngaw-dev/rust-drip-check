@@ -2,7 +2,7 @@
 
 diesel::table! {
     subscriptions (id) {
-        id -> Nullable<Integer>,
+        id -> Integer,
         title -> Text,
         price -> Integer,
         duration -> Text,

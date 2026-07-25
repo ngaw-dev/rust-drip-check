@@ -4,6 +4,7 @@ use diesel::prelude::*;
 #[diesel(table_name = crate::schema::subscriptions)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Subscription {
+    pub id: i32,
     pub title: String,
     pub price: i32,
     pub duration: String,

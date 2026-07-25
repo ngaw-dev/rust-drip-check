@@ -14,7 +14,8 @@ fn main() {
     println!("Displaying {} subscriptions", results.len());
     for sub in results {
         println!(
-            "Your subscription for {} at ${} per {:?} starting {}",
+            "(id: {:?}) Your subscription for {} at ${} per {:?} starting {}",
+            sub.id,
             sub.title,
             sub.price as f32 / 100.0,
             sub.duration,
