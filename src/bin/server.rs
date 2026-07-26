@@ -175,8 +175,8 @@ async fn show_reminders(State(state): State<AppState>) -> Json<Value> {
 
 #[derive(Deserialize, Debug)]
 struct ReminderParams {
-    id: u32,
-    reminder_id: u32,
+    id: i32,
+    reminder_id: i32,
 }
 
 async fn get_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
@@ -220,10 +220,28 @@ async fn update_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
     }))
 }
 
-async fn delete_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
-    Json(json!({
-        "data": {
-            "key": format!("TODO: delete_reminder for {} reminder_id {}", params.id, params.reminder_id)
-        }
-    }))
+async fn delete_reminder(
+    State(state): State<AppState>,
+    Path(params): Path<ReminderParams>,
+) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let deleted = diesel::delete(reminders::table.find(params.reminder_id))
+        .returning(Reminder::as_returning())
+        .get_result::<Reminder>(&mut conn)
+        .optional()
+        .expect("ERROR: deleting reminders");
+
+    match deleted {
+        Some(reminder) => Json(json!({
+            "data": reminder,
+            "message": format!("Reminder {} deleted", params.reminder_id)
+        })),
+        None => Json(
+            json!({ "data": null, "error": format!("Reminder {} not found", params.reminder_id) }),
+        ),
+    }
 }
