@@ -50,6 +50,13 @@ pub struct NewSubscription {
 
 use crate::schema::reminders;
 
+#[derive(Serialize)]
+pub struct SubscriptionWithReminders {
+    #[serde(flatten)]
+    pub subscription: Subscription,
+    pub reminders: Vec<Reminder>,
+}
+
 #[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq, Serialize)]
 #[diesel(belongs_to(Subscription))]
 #[diesel(table_name = reminders)]
@@ -66,6 +73,13 @@ pub struct Reminder {
 pub struct NewReminder {
     #[serde(default)]
     pub subscription_id: i32,
+    pub days_before: i32,
+    pub reminder_time: String,
+}
+
+#[derive(AsChangeset, Deserialize, Debug)]
+#[diesel(table_name = reminders)]
+pub struct UpdateReminder {
     pub days_before: i32,
     pub reminder_time: String,
 }

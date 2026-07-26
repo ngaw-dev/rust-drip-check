@@ -7,7 +7,9 @@ use axum::{
 };
 use diesel::prelude::*;
 use rust_drip_check::db::{self, DbPool};
-use rust_drip_check::models::{NewReminder, NewSubscription, Reminder, Subscription};
+use rust_drip_check::models::{
+    NewReminder, NewSubscription, Reminder, Subscription, SubscriptionWithReminders, UpdateReminder,
+};
 use rust_drip_check::schema::{reminders, subscriptions};
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -105,9 +107,19 @@ async fn get_subscription(State(state): State<AppState>, Path(id): Path<i32>) ->
         .expect("ERROR: loading subscriptions");
 
     match subscription {
-        Some(sub) => Json(json!({
-            "data": sub
-        })),
+        Some(sub) => {
+            let reminders = Reminder::belonging_to(&sub)
+                .select(Reminder::as_select())
+                .load::<Reminder>(&mut conn)
+                .expect("ERROR: loading reminders");
+
+            let data = SubscriptionWithReminders {
+                subscription: sub,
+                reminders,
+            };
+
+            Json(json!({ "data": data }))
+        }
         None => Json(json!({ "data": null, "error": format!("Subscription {} not found", id) })),
     }
 }
@@ -230,12 +242,29 @@ async fn create_reminder(
     }))
 }
 
-async fn update_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
-    Json(json!({
-        "data": {
-            "key": format!("TODO: update_reminder for {} reminder_id {}", params.id, params.reminder_id)
-        }
-    }))
+async fn update_reminder(
+    State(state): State<AppState>,
+    Path(params): Path<ReminderParams>,
+    Json(body): Json<UpdateReminder>,
+) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let reminder = diesel::update(reminders::table.find(params.reminder_id))
+        .set(&body)
+        .returning(Reminder::as_returning())
+        .get_result::<Reminder>(&mut conn)
+        .optional()
+        .expect("ERROR: updating reminder");
+
+    match reminder {
+        Some(r) => Json(json!({ "data": r })),
+        None => Json(
+            json!({ "data": null, "error": format!("Reminder {} not found", params.reminder_id) }),
+        ),
+    }
 }
 
 async fn delete_reminder(
