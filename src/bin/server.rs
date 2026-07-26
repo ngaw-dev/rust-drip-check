@@ -91,15 +91,28 @@ async fn create_subscription(
     }))
 }
 
-async fn get_subscription(Path(id): Path<u16>) -> Json<Value> {
-    Json(json!({
-        "data": {
-            "key": format!("TODO: get_subscription for {}", id)
-        }
-    }))
+async fn get_subscription(State(state): State<AppState>, Path(id): Path<i32>) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let subscription = subscriptions::table
+        .find(id)
+        .select(Subscription::as_select())
+        .first::<Subscription>(&mut conn)
+        .optional()
+        .expect("ERROR: loading subscriptions");
+
+    match subscription {
+        Some(sub) => Json(json!({
+            "data": sub
+        })),
+        None => Json(json!({ "data": null, "error": format!("Subscription {} not found", id) })),
+    }
 }
 
-async fn update_subscription(Path(id): Path<u16>) -> Json<Value> {
+async fn update_subscription(Path(id): Path<i32>) -> Json<Value> {
     Json(json!({
         "data": {
             "key": format!("TODO: update_subscription {}", id)
@@ -107,7 +120,7 @@ async fn update_subscription(Path(id): Path<u16>) -> Json<Value> {
     }))
 }
 
-async fn delete_subscription(Path(id): Path<u16>) -> Json<Value> {
+async fn delete_subscription(Path(id): Path<i32>) -> Json<Value> {
     Json(json!({
         "data": {
             "key": format!("TODO: delete_subscription {}", id)
