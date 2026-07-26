@@ -7,8 +7,8 @@ use axum::{
 };
 use diesel::prelude::*;
 use rust_drip_check::db::{self, DbPool};
-use rust_drip_check::models::{NewSubscription, Subscription};
-use rust_drip_check::schema::subscriptions;
+use rust_drip_check::models::{NewReminder, NewSubscription, Reminder, Subscription};
+use rust_drip_check::schema::{reminders, subscriptions};
 use serde::Deserialize;
 use serde_json::{Value, json};
 
@@ -157,11 +157,19 @@ async fn delete_subscription(State(state): State<AppState>, Path(id): Path<i32>)
     }
 }
 
-async fn show_reminders() -> Json<Value> {
+async fn show_reminders(State(state): State<AppState>) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let results = reminders::table
+        .select(Reminder::as_select())
+        .load::<Reminder>(&mut conn)
+        .expect("ERROR: loading reminders");
+
     Json(json!({
-        "data": {
-            "key": "TODO: show_reminders"
-        }
+        "data": results
     }))
 }
 
@@ -179,10 +187,27 @@ async fn get_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
     }))
 }
 
-async fn create_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
+async fn create_reminder(
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    Json(mut body): Json<NewReminder>,
+) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    body.subscription_id = id;
+
+    let reminder_id = diesel::insert_into(reminders::table)
+        .values(&body)
+        .returning(reminders::id)
+        .get_result::<i32>(&mut conn)
+        .expect("ERROR: saving new reminder");
+
     Json(json!({
         "data": {
-            "key": format!("TODO: create_reminder for {} reminder_id {}", params.id, params.reminder_id)
+            "id": reminder_id
         }
     }))
 }

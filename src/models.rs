@@ -50,7 +50,7 @@ pub struct NewSubscription {
 
 use crate::schema::reminders;
 
-#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq)]
+#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq, Serialize)]
 #[diesel(belongs_to(Subscription))]
 #[diesel(table_name = reminders)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
@@ -61,9 +61,10 @@ pub struct Reminder {
     pub reminder_time: String,
 }
 
-#[derive(Insertable, Debug)]
+#[derive(Insertable, Debug, Deserialize)]
 #[diesel(table_name = reminders)]
 pub struct NewReminder {
+    #[serde(default)]
     pub subscription_id: i32,
     pub days_before: i32,
     pub reminder_time: String,
