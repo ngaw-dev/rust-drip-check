@@ -1,5 +1,5 @@
 use diesel::prelude::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum::{AsRefStr, EnumIter, IntoEnumIterator};
 
@@ -26,7 +26,7 @@ impl fmt::Display for Duration {
     }
 }
 
-#[derive(Queryable, Selectable, Debug, Identifiable)]
+#[derive(Queryable, Selectable, Debug, Identifiable, Serialize)]
 #[diesel(table_name = crate::schema::subscriptions)]
 #[diesel(check_for_backend(diesel::sqlite::Sqlite))]
 pub struct Subscription {

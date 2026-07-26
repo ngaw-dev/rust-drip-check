@@ -7,7 +7,7 @@ use axum::{
 };
 use diesel::prelude::*;
 use rust_drip_check::db::{self, DbPool};
-use rust_drip_check::models::NewSubscription;
+use rust_drip_check::models::{NewSubscription, Subscription};
 use rust_drip_check::schema::subscriptions;
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -53,15 +53,18 @@ fn subscription_routes() -> Router<AppState> {
         )
 }
 
-async fn show_subscriptions() -> Json<Value> {
-    Json(json!({ 
-        "data": {
-            "id": 1,
-            "title": "Subscriptions title",
-            "price": 100,
-            "duration": "Monthly",
-            "start_date": "2026-04-14",
-    } }))
+async fn show_subscriptions(State(state): State<AppState>) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let results = subscriptions::table
+        .select(Subscription::as_select())
+        .load::<Subscription>(&mut conn)
+        .expect("ERROR: loading subscriptions");
+
+    Json(json!({ "data": results }))
 }
 
 async fn create_subscription(
