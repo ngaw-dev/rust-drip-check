@@ -179,12 +179,30 @@ struct ReminderParams {
     reminder_id: i32,
 }
 
-async fn get_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
-    Json(json!({
-        "data": {
-            "key": format!("TODO: get_reminder for {} reminder_id {}", params.id, params.reminder_id)
-        }
-    }))
+async fn get_reminder(
+    State(state): State<AppState>,
+    Path(params): Path<ReminderParams>,
+) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let reminder = reminders::table
+        .find(params.reminder_id)
+        .select(Reminder::as_select())
+        .first::<Reminder>(&mut conn)
+        .optional()
+        .expect("ERROR: loading reminders");
+
+    match reminder {
+        Some(sub) => Json(json!({
+            "data": sub
+        })),
+        None => Json(
+            json!({ "data": null, "error": format!("Reminder {} not found", params.reminder_id) }),
+        ),
+    }
 }
 
 async fn create_reminder(
