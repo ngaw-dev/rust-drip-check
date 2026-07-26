@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use serde::Deserialize;
 use std::fmt;
 use strum::{AsRefStr, EnumIter, IntoEnumIterator};
 
@@ -38,7 +39,7 @@ pub struct Subscription {
 
 use crate::schema::subscriptions;
 
-#[derive(Insertable, Debug)]
+#[derive(Insertable, Debug, Deserialize)]
 #[diesel(table_name = subscriptions)]
 pub struct NewSubscription {
     pub title: String,

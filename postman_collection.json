@@ -1,0 +1,508 @@
+{
+  "info": {
+    "name": "Rust Drip Check API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the Rust Drip Check subscription tracker API.\n\nBase URL: http://localhost:3000\n\n## Data Models\n\n**Subscription**\n- id (integer)\n- title (string)\n- price (integer, in cents)\n- duration (string: Weekly, Monthly, Quarterly, Yearly)\n- start_date (string, YYYY-MM-DD)\n\n**Reminder**\n- id (integer)\n- subscription_id (integer)\n- days_before (integer)\n- reminder_time (string, HH:MM)"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "subscription_id",
+      "value": "1"
+    },
+    {
+      "key": "reminder_id",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Home",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Root endpoint. Returns a plain text message directing to the API endpoints."
+      },
+      "response": []
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "List Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions"]
+            },
+            "description": "GET /api/v1/subscriptions\n\nRetrieve a list of subscriptions."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"title\": \"Subscriptions title\",\n    \"price\": 100,\n    \"duration\": \"Monthly\",\n    \"start_date\": \"2026-04-14\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Netflix\",\n  \"price\": 1599,\n  \"duration\": \"Monthly\",\n  \"start_date\": \"2026-01-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions"]
+            },
+            "description": "POST /api/v1/subscriptions\n\nCreate a new subscription.\n\n**Body Fields:**\n- title (string): Name of the subscription\n- price (integer): Price in cents (e.g. 1599 = $15.99)\n- duration (string): One of Weekly, Monthly, Quarterly, Yearly\n- start_date (string): Start date in YYYY-MM-DD format"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Netflix\",\n  \"price\": 1599,\n  \"duration\": \"Monthly\",\n  \"start_date\": \"2026-01-15\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: create_subscription\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Subscription by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                }
+              ]
+            },
+            "description": "GET /api/v1/subscriptions/{id}\n\nRetrieve a single subscription by its ID."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: get_subscription for 1\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Subscription",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Netflix Premium\",\n  \"price\": 2299,\n  \"duration\": \"Monthly\",\n  \"start_date\": \"2026-01-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                }
+              ]
+            },
+            "description": "PUT /api/v1/subscriptions/{id}\n\nUpdate an existing subscription by its ID.\n\n**Body Fields (all from the Subscription model):**\n- title (string)\n- price (integer, cents)\n- duration (string: Weekly, Monthly, Quarterly, Yearly)\n- start_date (string, YYYY-MM-DD)"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Netflix Premium\",\n  \"price\": 2299,\n  \"duration\": \"Monthly\",\n  \"start_date\": \"2026-01-15\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: update_subscription 1\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Subscription",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                }
+              ]
+            },
+            "description": "DELETE /api/v1/subscriptions/{id}\n\nDelete a subscription by its ID."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: delete_subscription 1\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Reminder (via Subscription)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days_before\": 3,\n  \"reminder_time\": \"09:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                }
+              ]
+            },
+            "description": "POST /api/v1/subscriptions/{id}\n\nCreate a reminder for a subscription (POST handler on the /{id} route).\n\n**Body Fields:**\n- days_before (integer): Number of days before expiration\n- reminder_time (string): Time in HH:MM format"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Reminders",
+      "item": [
+        {
+          "name": "List Reminders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id", "reminders"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                }
+              ]
+            },
+            "description": "GET /api/v1/subscriptions/{id}/reminders\n\nList all reminders for a given subscription."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id", "reminders"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: show_reminders\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Reminder",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days_before\": 3,\n  \"reminder_time\": \"09:00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id", "reminders"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                }
+              ]
+            },
+            "description": "POST /api/v1/subscriptions/{id}/reminders\n\nCreate a new reminder for a subscription.\n\n**Body Fields:**\n- days_before (integer): Number of days before expiration to send reminder\n- reminder_time (string): Time in HH:MM format (e.g. 09:00)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Reminder",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders/:reminder_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id", "reminders", ":reminder_id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                },
+                {
+                  "key": "reminder_id",
+                  "value": "{{reminder_id}}"
+                }
+              ]
+            },
+            "description": "GET /api/v1/subscriptions/{id}/reminders/{reminder_id}\n\nRetrieve a specific reminder for a subscription."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders/:reminder_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id", "reminders", ":reminder_id"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: get_reminder for 1 reminder_id 1\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Reminder",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"days_before\": 7,\n  \"reminder_time\": \"08:30\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders/:reminder_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id", "reminders", ":reminder_id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                },
+                {
+                  "key": "reminder_id",
+                  "value": "{{reminder_id}}"
+                }
+              ]
+            },
+            "description": "PUT /api/v1/subscriptions/{id}/reminders/{reminder_id}\n\nUpdate a specific reminder.\n\n**Body Fields:**\n- days_before (integer)\n- reminder_time (string, HH:MM)"
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"days_before\": 7,\n  \"reminder_time\": \"08:30\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders/:reminder_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id", "reminders", ":reminder_id"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: update_reminder for 1 reminder_id 1\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Reminder",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders/:reminder_id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id", "reminders", ":reminder_id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "{{subscription_id}}"
+                },
+                {
+                  "key": "reminder_id",
+                  "value": "{{reminder_id}}"
+                }
+              ]
+            },
+            "description": "DELETE /api/v1/subscriptions/{id}/reminders/{reminder_id}\n\nDelete a specific reminder."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/v1/subscriptions/:id/reminders/:reminder_id",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "v1", "subscriptions", ":id", "reminders", ":reminder_id"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"data\": {\n    \"key\": \"TODO: delete_reminder for 1 reminder_id 1\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

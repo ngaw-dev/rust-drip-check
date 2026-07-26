@@ -1,22 +1,30 @@
 #![allow(unused_imports)]
 
-#[derive(Clone)]
-struct AppState;
-
 use axum::{
     Json, Router,
-    extract::Path,
+    extract::{Path, State},
     routing::{delete, get, post, put},
 };
+use diesel::prelude::*;
+use rust_drip_check::db::{self, DbPool};
+use rust_drip_check::models::NewSubscription;
+use rust_drip_check::schema::subscriptions;
 use serde::Deserialize;
 use serde_json::{Value, json};
+
+#[derive(Clone)]
+struct AppState {
+    db: DbPool,
+}
 
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/", get(|| async { "Visit api endpoints for data" }))
         .nest("/api/v1/subscriptions", subscription_routes())
-        .with_state(AppState);
+        .with_state(AppState {
+            db: db::establish_pool(),
+        });
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
@@ -56,10 +64,26 @@ async fn show_subscriptions() -> Json<Value> {
     } }))
 }
 
-async fn create_subscription() -> Json<Value> {
+async fn create_subscription(
+    State(state): State<AppState>,
+    Json(body): Json<NewSubscription>,
+) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let subscription_id = diesel::insert_into(subscriptions::table)
+        .values(&body)
+        .returning(subscriptions::id)
+        .get_result::<i32>(&mut conn)
+        .expect("ERROR: saving new subscription");
+
+    println!("Saved subscription with id {}", subscription_id);
+
     Json(json!({
         "data": {
-            "key": "TODO: create_subscription"
+            "id": subscription_id
         }
     }))
 }
