@@ -1,19 +1,21 @@
+#![allow(unused_imports)]
+
 #[derive(Clone)]
 struct AppState;
 
 use axum::{
     Json, Router,
+    extract::Path,
     routing::{delete, get, post, put},
 };
+use serde::Deserialize;
 use serde_json::{Value, json};
 
 #[tokio::main]
 async fn main() {
-    // build our application with a single route
     let app = Router::new()
         .route("/", get(|| async { "Visit api endpoints for data" }))
         .nest("/api/v1/subscriptions", subscription_routes())
-        .nest("/api/v1/subscriptions/{id}/reminders", reminder_routes())
         .with_state(AppState);
 
     // run our app with hyper, listening globally on port 3000
@@ -31,15 +33,13 @@ fn subscription_routes() -> Router<AppState> {
                 .put(update_subscription)
                 .delete(delete_subscription),
         )
-}
-
-fn reminder_routes() -> Router<AppState> {
-    Router::new()
-        .route("/", get(show_reminders).post(create_reminder))
         .route(
-            "/{id}",
+            "/{id}/reminders/",
+            get(show_reminders).post(create_reminder),
+        )
+        .route(
+            "/{id}/reminders/{reminder_id}",
             get(get_reminder)
-                .post(create_reminder)
                 .put(update_reminder)
                 .delete(delete_reminder),
         )
@@ -64,26 +64,26 @@ async fn create_subscription() -> Json<Value> {
     }))
 }
 
-async fn get_subscription() -> Json<Value> {
+async fn get_subscription(Path(id): Path<u16>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: get_subscription"
+            "key": format!("TODO: get_subscription for {}", id)
         }
     }))
 }
 
-async fn update_subscription() -> Json<Value> {
+async fn update_subscription(Path(id): Path<u16>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: update_subscription"
+            "key": format!("TODO: update_subscription {}", id)
         }
     }))
 }
 
-async fn delete_subscription() -> Json<Value> {
+async fn delete_subscription(Path(id): Path<u16>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: delete_subscription"
+            "key": format!("TODO: delete_subscription {}", id)
         }
     }))
 }
@@ -96,34 +96,40 @@ async fn show_reminders() -> Json<Value> {
     }))
 }
 
-async fn get_reminder() -> Json<Value> {
+#[derive(Deserialize, Debug)]
+struct ReminderParams {
+    id: u32,
+    reminder_id: u32,
+}
+
+async fn get_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: get_reminder"
+            "key": format!("TODO: get_reminder for {} reminder_id {}", params.id, params.reminder_id)
         }
     }))
 }
 
-async fn create_reminder() -> Json<Value> {
+async fn create_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: create_reminder"
+            "key": format!("TODO: create_reminder for {} reminder_id {}", params.id, params.reminder_id)
         }
     }))
 }
 
-async fn update_reminder() -> Json<Value> {
+async fn update_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: update_reminder"
+            "key": format!("TODO: update_reminder for {} reminder_id {}", params.id, params.reminder_id)
         }
     }))
 }
 
-async fn delete_reminder() -> Json<Value> {
+async fn delete_reminder(Path(params): Path<ReminderParams>) -> Json<Value> {
     Json(json!({
         "data": {
-            "key": "TODO: delete_reminder"
+            "key": format!("TODO: delete_reminder for {} reminder_id {}", params.id, params.reminder_id)
         }
     }))
 }
