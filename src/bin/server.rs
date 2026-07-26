@@ -112,7 +112,12 @@ async fn get_subscription(State(state): State<AppState>, Path(id): Path<i32>) ->
     }
 }
 
-async fn update_subscription(Path(id): Path<i32>) -> Json<Value> {
+async fn update_subscription(State(state): State<AppState>, Path(id): Path<i32>) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
     Json(json!({
         "data": {
             "key": format!("TODO: update_subscription {}", id)
@@ -120,12 +125,24 @@ async fn update_subscription(Path(id): Path<i32>) -> Json<Value> {
     }))
 }
 
-async fn delete_subscription(Path(id): Path<i32>) -> Json<Value> {
-    Json(json!({
-        "data": {
-            "key": format!("TODO: delete_subscription {}", id)
+async fn delete_subscription(State(state): State<AppState>, Path(id): Path<i32>) -> Json<Value> {
+    let mut conn = state
+        .db
+        .get()
+        .expect("ERROR: getting db connection from pool");
+
+    let deleted = diesel::delete(subscriptions::table.find(id))
+        .returning(Subscription::as_returning())
+        .get_result::<Subscription>(&mut conn)
+        .optional()
+        .expect("ERROR: deleting subscription");
+
+    match deleted {
+        Some(sub) => {
+            Json(json!({ "data": sub, "message": format!("Subscription {} deleted", id) }))
         }
-    }))
+        None => Json(json!({ "data": null, "error": format!("Subscription {} not found", id) })),
+    }
 }
 
 async fn show_reminders() -> Json<Value> {
