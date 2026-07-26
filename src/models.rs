@@ -39,7 +39,7 @@ pub struct Subscription {
 
 use crate::schema::subscriptions;
 
-#[derive(Insertable, Debug, Deserialize)]
+#[derive(Insertable, Debug, Deserialize, AsChangeset)]
 #[diesel(table_name = subscriptions)]
 pub struct NewSubscription {
     pub title: String,

@@ -112,17 +112,29 @@ async fn get_subscription(State(state): State<AppState>, Path(id): Path<i32>) ->
     }
 }
 
-async fn update_subscription(State(state): State<AppState>, Path(id): Path<i32>) -> Json<Value> {
+async fn update_subscription(
+    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    Json(body): Json<NewSubscription>,
+) -> Json<Value> {
     let mut conn = state
         .db
         .get()
         .expect("ERROR: getting db connection from pool");
 
-    Json(json!({
-        "data": {
-            "key": format!("TODO: update_subscription {}", id)
-        }
-    }))
+    let subscription = diesel::update(subscriptions::table.find(id))
+        .set(&body)
+        .returning(Subscription::as_returning())
+        .get_result::<Subscription>(&mut conn)
+        .optional()
+        .expect("ERROR: updating subscription");
+
+    match subscription {
+        Some(sub) => Json(json!({
+            "data": sub
+        })),
+        None => Json(json!({ "data": null, "error": format!("Subscription {} not found", id) })),
+    }
 }
 
 async fn delete_subscription(State(state): State<AppState>, Path(id): Path<i32>) -> Json<Value> {
